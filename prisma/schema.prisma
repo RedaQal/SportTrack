@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+model User {
+  id        Int              @id @default(autoincrement())
+  name      String
+  email     String           @unique
+  password  String
+  age       Int?
+  weight    Float?
+  height    Float?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  sessions  WorkoutSession[]
+  goals     Goal[]
+}
+
+model Goal {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      GoalType
+  label     String
+  target    Float
+  current   Float     @default(0)
+  unit      String
+  deadline  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model WorkoutSession {
+  id            Int               @id @default(autoincrement())
+  userId        Int
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          DateTime          @db.Date
+  totalCalories Int
+  totalDuration Int
+  mood          Int
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  exercises     WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id           Int              @id @default(autoincrement())
+  sessionId    Int
+  session      WorkoutSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId   Int
+  exercise     Exercise         @relation(fields: [exerciseId], references: [id])
+  exerciseName String
+  category     ExerciseCategory
+  duration     Int
+  calories     Int
+  sets         Int?
+  reps         Int?
+  weight       Float?
+  distance     Float?
+  createdAt    DateTime         @default(now())
+}
+
+model Exercise {
+  id             Int               @id @default(autoincrement())
+  name           String
+  category       ExerciseCategory
+  icon           String
+  caloriesPerMin Float
+  description    String?
+  createdAt      DateTime          @default(now())
+  workouts       WorkoutExercise[]
+}
+
+enum GoalType {
+  weight
+  calories
+  workouts
+  distance
+  custom
+}
+
+enum ExerciseCategory {
+  cardio
+  strength
+  flexibility
+  hiit
+  sports
+}
