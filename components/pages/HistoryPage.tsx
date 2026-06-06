@@ -2,10 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { deleteSession } from '@/lib/slices/workoutSlice';
+import { deleteSessionThunk } from '@/lib/slices/workoutSlice';
 import { addNotification } from '@/lib/slices/uiSlice';
-import { WorkoutSession } from '@/types';
-import { format, parseISO, subDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Trash2, ChevronDown, ChevronUp, Calendar, Flame, Clock, Filter } from 'lucide-react';
 import {
@@ -20,45 +19,44 @@ const categoryColors: Record<string, string> = {
 export default function HistoryPage() {
   const dispatch = useAppDispatch();
   const { sessions } = useAppSelector(s => s.workout);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<number | null>(null);
   const [filter, setFilter] = useState('all');
   const [range, setRange] = useState(30);
 
   const filtered = useMemo(() => {
     const since = subDays(new Date(), range);
     return sessions.filter(s => {
-      const d = parseISO(s.date);
+      const d = new Date(s.date);
       if (d < since) return false;
       if (filter === 'all') return true;
       return s.exercises.some(e => e.category === filter);
     });
   }, [sessions, range, filter]);
 
-  // Trend data
   const trendData = useMemo(() => {
     const days: Record<string, { calories: number; duration: number }> = {};
     filtered.forEach(s => {
-      if (!days[s.date]) days[s.date] = { calories: 0, duration: 0 };
-      days[s.date].calories += s.totalCalories;
-      days[s.date].duration += s.totalDuration;
+      const dateKey = format(new Date(s.date), 'yyyy-MM-dd');
+      if (!days[dateKey]) days[dateKey] = { calories: 0, duration: 0 };
+      days[dateKey].calories += s.totalCalories;
+      days[dateKey].duration += s.totalDuration;
     });
     return Object.entries(days)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, v]) => ({
-        date: format(parseISO(date), 'd MMM', { locale: fr }),
+        date: format(new Date(date), 'd MMM', { locale: fr }),
         Calories: v.calories,
         Durée: v.duration,
       }));
   }, [filtered]);
 
-  const handleDelete = (id: string) => {
-    dispatch(deleteSession(id));
+  const handleDelete = async (id: number) => {
+    await dispatch(deleteSessionThunk(String(id)));
     dispatch(addNotification({ type: 'info', message: 'Séance supprimée' }));
   };
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-      {/* Trend chart */}
       {trendData.length > 1 && (
         <div className="stat-card animate-fade-in" style={{ marginBottom: '20px' }}>
           <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '15px', marginBottom: '16px' }}>
@@ -82,7 +80,6 @@ export default function HistoryPage() {
         </div>
       )}
 
-      {/* Filters */}
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '16px', alignItems: 'center' }}>
         <Filter size={16} color="var(--text-muted)" />
         {[7, 30, 90].map(r => (
@@ -121,7 +118,6 @@ export default function HistoryPage() {
         </span>
       </div>
 
-      {/* Sessions list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '48px', color: 'var(--text-muted)' }}>
@@ -158,7 +154,7 @@ export default function HistoryPage() {
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Calendar size={11} />
-                    {format(parseISO(session.date), "d MMMM yyyy", { locale: fr })}
+                    {format(new Date(session.date), "d MMMM yyyy", { locale: fr })}
                   </span>
                   <span style={{ fontSize: '12px', color: 'var(--accent-orange)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Flame size={11} />

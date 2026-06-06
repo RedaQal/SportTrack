@@ -1,8 +1,7 @@
 'use client';
-
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { updateProfile } from '@/lib/slices/authSlice';
+import { updateProfileThunk } from '@/lib/slices/authSlice';
 import { addNotification } from '@/lib/slices/uiSlice';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -36,12 +35,15 @@ export default function ProfilePage() {
     },
   });
 
-  const onSubmit = (data: ProfileForm) => {
-    dispatch(updateProfile(data));
-    dispatch(addNotification({ type: 'success', message: 'Profil mis à jour !' }));
-    setEditing(false);
+  const onSubmit = async (data: ProfileForm) => {
+    const result = await dispatch(updateProfileThunk(data));
+    if (updateProfileThunk.fulfilled.match(result)) {
+      dispatch(addNotification({ type: 'success', message: 'Profil mis à jour !' }));
+      setEditing(false);
+    } else {
+      dispatch(addNotification({ type: 'error', message: 'Erreur lors de la mise à jour' }));
+    }
   };
-
   const totalCalories = sessions.reduce((s, c) => s + c.totalCalories, 0);
   const totalDuration = sessions.reduce((s, c) => s + c.totalDuration, 0);
   const avgMood = sessions.length
@@ -54,9 +56,9 @@ export default function ProfilePage() {
 
   const bmiLabel = bmi
     ? +bmi < 18.5 ? { label: 'Insuffisance pondérale', color: 'var(--accent-cyan)' }
-    : +bmi < 25 ? { label: 'Poids normal', color: 'var(--accent-green)' }
-    : +bmi < 30 ? { label: 'Surpoids', color: 'var(--accent-orange)' }
-    : { label: 'Obésité', color: '#ef4444' }
+      : +bmi < 25 ? { label: 'Poids normal', color: 'var(--accent-green)' }
+        : +bmi < 30 ? { label: 'Surpoids', color: 'var(--accent-orange)' }
+          : { label: 'Obésité', color: '#ef4444' }
     : null;
 
   return (

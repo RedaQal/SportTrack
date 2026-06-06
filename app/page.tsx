@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { login, register } from '@/lib/slices/authSlice';
+import { loginThunk, registerThunk, clearError } from '@/lib/slices/authSlice';
 import { addNotification } from '@/lib/slices/uiSlice';
 import { Activity, Eye, EyeOff, Zap, TrendingUp, Award } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -48,17 +48,25 @@ export default function AuthPage() {
   const loginForm = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
   const registerForm = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
 
-  const handleLogin = (data: LoginForm) => {
-    dispatch(login(data));
+const handleLogin = async (data: LoginForm) => {
+  const result = await dispatch(loginThunk(data));
+  if (loginThunk.fulfilled.match(result)) {
     dispatch(addNotification({ type: 'success', message: 'Connexion réussie ! Bienvenue 👋' }));
     router.push('/dashboard');
-  };
+  } else {
+    dispatch(addNotification({ type: 'error', message: result.payload as string }));
+  }
+};
 
-  const handleRegister = (data: RegisterForm) => {
-    dispatch(register(data));
+const handleRegister = async (data: RegisterForm) => {
+  const result = await dispatch(registerThunk(data));
+  if (registerThunk.fulfilled.match(result)) {
     dispatch(addNotification({ type: 'success', message: 'Compte créé avec succès !' }));
     router.push('/dashboard');
-  };
+  } else {
+    dispatch(addNotification({ type: 'error', message: result.payload as string }));
+  }
+};
 
   return (
     <div style={{

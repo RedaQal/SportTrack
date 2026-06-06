@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { updateGoal } from '@/lib/slices/authSlice';
+import { updateGoalThunk } from '@/lib/slices/authSlice';
 import { addNotification } from '@/lib/slices/uiSlice';
 import { startOfWeek, parseISO } from 'date-fns';
 import { RadialBarChart, RadialBar, ResponsiveContainer, Tooltip } from 'recharts';
@@ -38,9 +38,11 @@ export default function GoalsPage() {
     setEditTarget(target);
   };
 
-  const handleSave = (id: string) => {
-    dispatch(updateGoal({ id, target: editTarget }));
-    dispatch(addNotification({ type: 'success', message: 'Objectif mis à jour !' }));
+  const handleSave = async (id: string) => {
+    const result = await dispatch(updateGoalThunk({ id, target: editTarget }));
+    if (updateGoalThunk.fulfilled.match(result)) {
+      dispatch(addNotification({ type: 'success', message: 'Objectif mis à jour !' }));
+    }
     setEditing(null);
   };
 

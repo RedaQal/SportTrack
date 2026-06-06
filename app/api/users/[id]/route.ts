@@ -10,13 +10,18 @@ const schema = z.object({
   height: z.number().min(100).max(250).optional(),
 });
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(req);
     if (!token) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
     const { userId } = verifyToken(token);
-    if (userId !== parseInt(params.id)) {
+
+    if (userId !== parseInt(id)) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
@@ -34,13 +39,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(req);
     if (!token) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
     const { userId } = verifyToken(token);
-    if (userId !== parseInt(params.id)) {
+
+    if (userId !== parseInt(id)) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 

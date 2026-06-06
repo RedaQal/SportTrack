@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SportTrack — Plateforme de Suivi Sportif & Santé
 
-## Getting Started
+Application web full-stack permettant aux utilisateurs de suivre leurs activités sportives, surveiller leur état de santé et atteindre leurs objectifs personnels grâce à des statistiques et des tableaux de bord interactifs.
 
-First, run the development server:
+## Tech Stack
+
+- **Frontend** — Next.js 16, TypeScript, Redux Toolkit, Recharts, React Hook Form + Zod, Tailwind CSS
+- **Backend** — Next.js API Route Handlers
+- **ORM** — Prisma 7
+- **Base de données** — MySQL (XAMPP)
+- **Auth** — JWT (jsonwebtoken + bcryptjs)
+
+## Prérequis
+
+- Node.js 18+
+- XAMPP (MySQL)
+- npm
+
+## Installation
+
+### 1. Cloner le projet
+
+```bash
+git clone 
+cd sport-tracker
+```
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 3. Configurer les variables d'environnement
+
+```bash
+cp .env.example .env
+```
+
+Générer les secrets JWT :
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Copier la valeur générée dans `.env` pour `JWT_SECRET` et `NEXTAUTH_SECRET`.
+
+### 4. Démarrer MySQL
+
+Ouvrir XAMPP et démarrer le service **MySQL**.
+
+Créer la base de données dans phpMyAdmin (`http://localhost/phpmyadmin`) :
+
+```sql
+CREATE DATABASE sporttracker;
+```
+
+### 5. Initialiser la base de données
+
+```bash
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+```
+
+### 6. Démarrer le projet
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts disponibles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Démarre le serveur de développement |
+| `npm run build` | Build de production |
+| `npm run start` | Démarre le serveur de production |
+| `npx prisma db push` | Synchronise le schéma avec la base de données |
+| `npx prisma db seed` | Peuple la base de données avec les exercices |
+| `npx prisma studio --url "mysql://root:@localhost:3306/sporttracker"` | Interface visuelle de la base de données |
 
-## Learn More
+## Structure du projet
 
-To learn more about Next.js, take a look at the following resources:
+```
+sport-tracker/
+├── app/
+│   ├── api/
+│   │   ├── auth/                    # Register, Login, Me
+│   │   ├── users/[id]/              # Profil utilisateur
+│   │   ├── sessions/                # Séances d'entraînement
+│   │   ├── goals/                   # Objectifs
+│   │   ├── exercises/               # Exercices
+│   │   └── stats/                   # Statistiques dashboard
+│   ├── dashboard/
+│   ├── workouts/
+│   ├── history/
+│   ├── goals/
+│   └── profile/
+├── components/
+│   ├── layout/                      # Sidebar, Header, AppShell
+│   ├── pages/                       # Dashboard, Workouts, History, Goals, Profile
+│   └── ui/                          # Notifications
+├── lib/
+│   ├── slices/                      # Redux slices (auth, workout, ui)
+│   ├── store/                       # Redux store
+│   ├── prisma.ts                    # Prisma client singleton
+│   └── auth.ts                      # JWT helpers
+├── prisma/
+│   ├── schema.prisma                # Modèles de données
+│   └── seed.ts                      # Données initiales
+├── types/                           # Types TypeScript
+├── generated/prisma/                # Client Prisma généré
+├── .env.example                     # Template variables d'environnement
+└── middleware.ts                    # Protection des routes
+```
+## Fonctionnalités
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Authentification** — Inscription, connexion sécurisée avec JWT
+- **Dashboard** — Statistiques hebdomadaires, graphiques interactifs
+- **Entraînements** — Catalogue d'exercices, enregistrement de séances
+- **Historique** — Filtrage par période et catégorie, visualisation des tendances
+- **Objectifs** — Suivi de progression, badges de récompenses
+- **Profil** — Gestion des informations personnelles, calcul IMC
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Variables d'environnement
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | URL de connexion MySQL |
+| `JWT_SECRET` | Clé secrète pour les tokens JWT |
+| `NEXTAUTH_SECRET` | Clé secrète NextAuth |

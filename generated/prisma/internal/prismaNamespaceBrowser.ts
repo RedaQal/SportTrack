@@ -159,18 +159,50 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserOrderByRelevanceFieldEnum = {
+  name: 'name',
+  email: 'email',
+  password: 'password'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const GoalOrderByRelevanceFieldEnum = {
+  label: 'label',
+  unit: 'unit'
+} as const
+
+export type GoalOrderByRelevanceFieldEnum = (typeof GoalOrderByRelevanceFieldEnum)[keyof typeof GoalOrderByRelevanceFieldEnum]
+
+
+export const WorkoutSessionOrderByRelevanceFieldEnum = {
+  notes: 'notes'
+} as const
+
+export type WorkoutSessionOrderByRelevanceFieldEnum = (typeof WorkoutSessionOrderByRelevanceFieldEnum)[keyof typeof WorkoutSessionOrderByRelevanceFieldEnum]
+
+
+export const WorkoutExerciseOrderByRelevanceFieldEnum = {
+  exerciseName: 'exerciseName'
+} as const
+
+export type WorkoutExerciseOrderByRelevanceFieldEnum = (typeof WorkoutExerciseOrderByRelevanceFieldEnum)[keyof typeof WorkoutExerciseOrderByRelevanceFieldEnum]
+
+
+export const ExerciseOrderByRelevanceFieldEnum = {
+  name: 'name',
+  icon: 'icon',
+  description: 'description'
+} as const
+
+export type ExerciseOrderByRelevanceFieldEnum = (typeof ExerciseOrderByRelevanceFieldEnum)[keyof typeof ExerciseOrderByRelevanceFieldEnum]
 

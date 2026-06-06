@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { addSession } from '@/lib/slices/workoutSlice';
+import { addSessionThunk, fetchExercisesThunk } from '@/lib/slices/workoutSlice';
 import { addNotification } from '@/lib/slices/uiSlice';
 import { WorkoutExercise } from '@/types';
-import { EXERCISES } from '@/lib/slices/workoutSlice';
 import { Plus, Trash2, Play, X } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -60,9 +59,9 @@ export default function WorkoutsPage() {
     setWorkoutExercises(prev => prev.filter((_, i) => i !== idx));
   };
 
-  const saveWorkout = () => {
+  const saveWorkout = async () => {
     if (!workoutExercises.length) return;
-    dispatch(addSession({
+    const result = await dispatch(addSessionThunk({
       date: format(new Date(), 'yyyy-MM-dd'),
       exercises: workoutExercises,
       totalCalories: workoutExercises.reduce((s, e) => s + e.calories, 0),
@@ -70,10 +69,14 @@ export default function WorkoutsPage() {
       mood,
       notes,
     }));
-    dispatch(addNotification({ type: 'success', message: 'Séance enregistrée avec succès ! 🎉' }));
-    setWorkoutExercises([]);
-    setNotes('');
-    setMood(3);
+    if (addSessionThunk.fulfilled.match(result)) {
+      dispatch(addNotification({ type: 'success', message: 'Séance enregistrée ! 🎉' }));
+      setWorkoutExercises([]);
+      setNotes('');
+      setMood(3);
+    } else {
+      dispatch(addNotification({ type: 'error', message: 'Erreur lors de l\'enregistrement' }));
+    }
   };
 
   const selectedEx = exercises.find(e => e.id === selectedExId);

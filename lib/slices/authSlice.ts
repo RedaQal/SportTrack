@@ -58,8 +58,11 @@ export const registerThunk = createAsyncThunk(
 export const fetchMeThunk = createAsyncThunk(
   'auth/me',
   async (_, { rejectWithValue }) => {
-    const token = getStoredToken();
+    const token = typeof window !== 'undefined' 
+      ? localStorage.getItem('token') 
+      : null;
     if (!token) return rejectWithValue('No token');
+    
     const res = await fetch('/api/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     });
