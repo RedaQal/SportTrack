@@ -1,17 +1,18 @@
+export type ExerciseCategory = 'cardio' | 'strength' | 'flexibility' | 'hiit' | 'sports';
+
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  avatar?: string;
   age?: number;
-  weight?: number; // kg
-  height?: number; // cm
+  weight?: number;
+  height?: number;
   goals: Goal[];
   createdAt: string;
 }
 
 export interface Goal {
-  id: string;
+  id: number;
   type: 'weight' | 'calories' | 'workouts' | 'distance' | 'custom';
   label: string;
   target: number;
@@ -20,36 +21,34 @@ export interface Goal {
   deadline?: string;
 }
 
-export type ExerciseCategory = 'cardio' | 'strength' | 'flexibility' | 'sports' | 'hiit';
-
 export interface Exercise {
-  id: string;
+  id: number;
   name: string;
   category: ExerciseCategory;
   icon: string;
-  defaultDuration?: number; // minutes
-  caloriesPerMinute?: number;
+  caloriesPerMin?: number;
+  description?: string;
 }
 
 export interface WorkoutSession {
-  id: string;
+  id: number;
   date: string;
   exercises: WorkoutExercise[];
   totalCalories: number;
-  totalDuration: number; // minutes
-  notes?: string;
+  totalDuration: number;
   mood: 1 | 2 | 3 | 4 | 5;
+  notes?: string;
 }
 
 export interface WorkoutExercise {
-  exerciseId: string;
+  exerciseId: number;
   exerciseName: string;
   category: ExerciseCategory;
-  duration: number; // minutes
+  duration: number;
   sets?: number;
   reps?: number;
-  weight?: number; // kg
-  distance?: number; // km
+  weight?: number;
+  distance?: number;
   calories: number;
 }
 

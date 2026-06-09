@@ -280,6 +280,7 @@ export type WorkoutSessionOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   exercises?: Prisma.WorkoutExerciseOrderByRelationAggregateInput
+  _relevance?: Prisma.WorkoutSessionOrderByRelevanceInput
 }
 
 export type WorkoutSessionWhereUniqueInput = Prisma.AtLeast<{
@@ -423,6 +424,12 @@ export type WorkoutSessionListRelationFilter = {
 
 export type WorkoutSessionOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type WorkoutSessionOrderByRelevanceInput = {
+  fields: Prisma.WorkoutSessionOrderByRelevanceFieldEnum | Prisma.WorkoutSessionOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type WorkoutSessionCountOrderByAggregateInput = {
@@ -759,31 +766,7 @@ export type WorkoutSessionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   _count?: boolean | Prisma.WorkoutSessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["workoutSession"]>
 
-export type WorkoutSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  date?: boolean
-  totalCalories?: boolean
-  totalDuration?: boolean
-  mood?: boolean
-  notes?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["workoutSession"]>
 
-export type WorkoutSessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  date?: boolean
-  totalCalories?: boolean
-  totalDuration?: boolean
-  mood?: boolean
-  notes?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["workoutSession"]>
 
 export type WorkoutSessionSelectScalar = {
   id?: boolean
@@ -802,12 +785,6 @@ export type WorkoutSessionInclude<ExtArgs extends runtime.Types.Extensions.Inter
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   exercises?: boolean | Prisma.WorkoutSession$exercisesArgs<ExtArgs>
   _count?: boolean | Prisma.WorkoutSessionCountOutputTypeDefaultArgs<ExtArgs>
-}
-export type WorkoutSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type WorkoutSessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $WorkoutSessionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -944,30 +921,6 @@ export interface WorkoutSessionDelegate<ExtArgs extends runtime.Types.Extensions
   createMany<T extends WorkoutSessionCreateManyArgs>(args?: Prisma.SelectSubset<T, WorkoutSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many WorkoutSessions and returns the data saved in the database.
-   * @param {WorkoutSessionCreateManyAndReturnArgs} args - Arguments to create many WorkoutSessions.
-   * @example
-   * // Create many WorkoutSessions
-   * const workoutSession = await prisma.workoutSession.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many WorkoutSessions and only return the `id`
-   * const workoutSessionWithIdOnly = await prisma.workoutSession.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends WorkoutSessionCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, WorkoutSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkoutSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a WorkoutSession.
    * @param {WorkoutSessionDeleteArgs} args - Arguments to delete one WorkoutSession.
    * @example
@@ -1030,36 +983,6 @@ export interface WorkoutSessionDelegate<ExtArgs extends runtime.Types.Extensions
    * 
    */
   updateMany<T extends WorkoutSessionUpdateManyArgs>(args: Prisma.SelectSubset<T, WorkoutSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more WorkoutSessions and returns the data updated in the database.
-   * @param {WorkoutSessionUpdateManyAndReturnArgs} args - Arguments to update many WorkoutSessions.
-   * @example
-   * // Update many WorkoutSessions
-   * const workoutSession = await prisma.workoutSession.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more WorkoutSessions and only return the `id`
-   * const workoutSessionWithIdOnly = await prisma.workoutSession.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends WorkoutSessionUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, WorkoutSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkoutSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one WorkoutSession.
@@ -1498,29 +1421,6 @@ export type WorkoutSessionCreateManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * WorkoutSession createManyAndReturn
- */
-export type WorkoutSessionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the WorkoutSession
-   */
-  select?: Prisma.WorkoutSessionSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the WorkoutSession
-   */
-  omit?: Prisma.WorkoutSessionOmit<ExtArgs> | null
-  /**
-   * The data used to create many WorkoutSessions.
-   */
-  data: Prisma.WorkoutSessionCreateManyInput | Prisma.WorkoutSessionCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WorkoutSessionIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * WorkoutSession update
  */
 export type WorkoutSessionUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1562,36 +1462,6 @@ export type WorkoutSessionUpdateManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many WorkoutSessions to update.
    */
   limit?: number
-}
-
-/**
- * WorkoutSession updateManyAndReturn
- */
-export type WorkoutSessionUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the WorkoutSession
-   */
-  select?: Prisma.WorkoutSessionSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the WorkoutSession
-   */
-  omit?: Prisma.WorkoutSessionOmit<ExtArgs> | null
-  /**
-   * The data used to update WorkoutSessions.
-   */
-  data: Prisma.XOR<Prisma.WorkoutSessionUpdateManyMutationInput, Prisma.WorkoutSessionUncheckedUpdateManyInput>
-  /**
-   * Filter which WorkoutSessions to update
-   */
-  where?: Prisma.WorkoutSessionWhereInput
-  /**
-   * Limit how many WorkoutSessions to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WorkoutSessionIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

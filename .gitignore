@@ -30,8 +30,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# keep the example file
+!.env.example
 
 # vercel
 .vercel
@@ -40,7 +46,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma generated client
+/generated/prisma
 /lib/generated/prisma
 
-# local env files
-.env
+# prisma migrations (optional — remove this line if you want to commit migrations)
+# /prisma/migrations
+
+# prisma local database
+.prisma/
+
+# OS
+Thumbs.db
+Desktop.ini

@@ -26,6 +26,12 @@
       "@/*": [
         "./*",
         "./src/*"
+      ],
+      "@/generated/prisma": [
+        "./generated/prisma/client"
+      ],
+      "@/generated/prisma/client": [
+        "./generated/prisma/client"
       ]
     }
   },

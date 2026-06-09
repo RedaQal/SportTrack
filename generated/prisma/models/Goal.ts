@@ -283,6 +283,7 @@ export type GoalOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  _relevance?: Prisma.GoalOrderByRelevanceInput
 }
 
 export type GoalWhereUniqueInput = Prisma.AtLeast<{
@@ -431,6 +432,12 @@ export type GoalListRelationFilter = {
 
 export type GoalOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type GoalOrderByRelevanceInput = {
+  fields: Prisma.GoalOrderByRelevanceFieldEnum | Prisma.GoalOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type GoalCountOrderByAggregateInput = {
@@ -672,33 +679,7 @@ export type GoalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["goal"]>
 
-export type GoalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  type?: boolean
-  label?: boolean
-  target?: boolean
-  current?: boolean
-  unit?: boolean
-  deadline?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["goal"]>
 
-export type GoalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  type?: boolean
-  label?: boolean
-  target?: boolean
-  current?: boolean
-  unit?: boolean
-  deadline?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["goal"]>
 
 export type GoalSelectScalar = {
   id?: boolean
@@ -715,12 +696,6 @@ export type GoalSelectScalar = {
 
 export type GoalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "label" | "target" | "current" | "unit" | "deadline" | "createdAt" | "updatedAt", ExtArgs["result"]["goal"]>
 export type GoalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type GoalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type GoalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
@@ -858,30 +833,6 @@ export interface GoalDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
   createMany<T extends GoalCreateManyArgs>(args?: Prisma.SelectSubset<T, GoalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many Goals and returns the data saved in the database.
-   * @param {GoalCreateManyAndReturnArgs} args - Arguments to create many Goals.
-   * @example
-   * // Create many Goals
-   * const goal = await prisma.goal.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many Goals and only return the `id`
-   * const goalWithIdOnly = await prisma.goal.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends GoalCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, GoalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a Goal.
    * @param {GoalDeleteArgs} args - Arguments to delete one Goal.
    * @example
@@ -944,36 +895,6 @@ export interface GoalDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * 
    */
   updateMany<T extends GoalUpdateManyArgs>(args: Prisma.SelectSubset<T, GoalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more Goals and returns the data updated in the database.
-   * @param {GoalUpdateManyAndReturnArgs} args - Arguments to update many Goals.
-   * @example
-   * // Update many Goals
-   * const goal = await prisma.goal.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more Goals and only return the `id`
-   * const goalWithIdOnly = await prisma.goal.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends GoalUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, GoalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one Goal.
@@ -1412,29 +1333,6 @@ export type GoalCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Goal createManyAndReturn
- */
-export type GoalCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Goal
-   */
-  select?: Prisma.GoalSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Goal
-   */
-  omit?: Prisma.GoalOmit<ExtArgs> | null
-  /**
-   * The data used to create many Goals.
-   */
-  data: Prisma.GoalCreateManyInput | Prisma.GoalCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GoalIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * Goal update
  */
 export type GoalUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1476,36 +1374,6 @@ export type GoalUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Goals to update.
    */
   limit?: number
-}
-
-/**
- * Goal updateManyAndReturn
- */
-export type GoalUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Goal
-   */
-  select?: Prisma.GoalSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the Goal
-   */
-  omit?: Prisma.GoalOmit<ExtArgs> | null
-  /**
-   * The data used to update Goals.
-   */
-  data: Prisma.XOR<Prisma.GoalUpdateManyMutationInput, Prisma.GoalUncheckedUpdateManyInput>
-  /**
-   * Filter which Goals to update
-   */
-  where?: Prisma.GoalWhereInput
-  /**
-   * Limit how many Goals to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GoalIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
