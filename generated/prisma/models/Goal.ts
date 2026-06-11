@@ -547,10 +547,6 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type GoalCreateWithoutUserInput = {
   type: $Enums.GoalType
   label: string

@@ -154,7 +154,7 @@ export default function HistoryPage() {
                   <span style={{ fontSize: '12px', color: 'var(--color-cyan)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Clock size={11} /> {session.totalDuration} min
                   </span>
-                  <span style={{ fontSize: '14px' }}>{'😴😐🙂😊🔥'[session.mood - 1]}</span>
+                  <span style={{ fontSize: '14px' }}>{['😴', '😐', '🙂', '😊', '🔥'][session.mood - 1]}</span>
                 </div>
               </div>
               <button

@@ -11,11 +11,11 @@ import { fr } from 'date-fns/locale';
 import { Flame, Clock, Dumbbell, TrendingUp, Activity, Zap } from 'lucide-react';
 
 const COLORS = {
-  cardio:      '#00e5ff',
-  strength:    '#7c3aed',
+  cardio: '#00e5ff',
+  strength: '#7c3aed',
   flexibility: '#00ff88',
-  hiit:        '#ff6b35',
-  sports:      '#ec4899',
+  hiit: '#ff6b35',
+  sports: '#ec4899',
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -33,21 +33,21 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function Dashboard() {
-  const { user }     = useAppSelector(s => s.auth);
+  const { user } = useAppSelector(s => s.auth);
   const { sessions } = useAppSelector(s => s.workout);
 
   const stats = useMemo(() => {
-    const now       = new Date();
+    const now = new Date();
     const weekStart = startOfWeek(now, { weekStartsOn: 1 });
-    const weekSessions  = sessions.filter(s => parseISO(s.date) >= weekStart);
+    const weekSessions = sessions.filter(s => parseISO(s.date) >= weekStart);
     const monthSessions = sessions.filter(s => parseISO(s.date) >= subDays(now, 30));
     return {
-      weekCalories:  weekSessions.reduce((sum, s) => sum + s.totalCalories, 0),
-      weekDuration:  weekSessions.reduce((sum, s) => sum + s.totalDuration, 0),
-      weekWorkouts:  weekSessions.length,
+      weekCalories: weekSessions.reduce((sum, s) => sum + s.totalCalories, 0),
+      weekDuration: weekSessions.reduce((sum, s) => sum + s.totalDuration, 0),
+      weekWorkouts: weekSessions.length,
       monthWorkouts: monthSessions.length,
       totalCalories: sessions.reduce((sum, s) => sum + s.totalCalories, 0),
-      avgDuration:   sessions.length
+      avgDuration: sessions.length
         ? Math.round(sessions.reduce((sum, s) => sum + s.totalDuration, 0) / sessions.length)
         : 0,
     };
@@ -58,10 +58,10 @@ export default function Dashboard() {
     return days.map(day => {
       const ds = sessions.filter(s => isSameDay(parseISO(s.date), day));
       return {
-        day:      format(day, 'EEE', { locale: fr }),
+        day: format(day, 'EEE', { locale: fr }),
         Calories: ds.reduce((sum, s) => sum + s.totalCalories, 0),
-        Durée:    ds.reduce((sum, s) => sum + s.totalDuration, 0),
-        séances:  ds.length,
+        Durée: ds.reduce((sum, s) => sum + s.totalDuration, 0),
+        séances: ds.length,
       };
     });
   }, [sessions]);
@@ -77,13 +77,13 @@ export default function Dashboard() {
   const recentSessions = sessions.slice(0, 4);
 
   const statCards = [
-    { label: 'Calories cette semaine', value: stats.weekCalories.toLocaleString(), unit: 'kcal',      icon: Flame,    color: 'var(--color-orange)', bg: 'rgba(255,107,53,0.1)' },
-    { label: 'Durée cette semaine',    value: stats.weekDuration,                  unit: 'min',       icon: Clock,    color: 'var(--color-cyan)',   bg: 'rgba(0,229,255,0.1)'  },
-    { label: 'Séances cette semaine',  value: stats.weekWorkouts,                  unit: 'séances',   icon: Dumbbell, color: 'var(--color-green)',  bg: 'rgba(0,255,136,0.1)'  },
-    { label: 'Durée moyenne',          value: stats.avgDuration,                   unit: 'min/séance',icon: Activity, color: 'var(--color-purple)', bg: 'rgba(124,58,237,0.1)' },
+    { label: 'Calories cette semaine', value: stats.weekCalories.toLocaleString(), unit: 'kcal', icon: Flame, color: 'var(--color-orange)', bg: 'rgba(255,107,53,0.1)' },
+    { label: 'Durée cette semaine', value: stats.weekDuration, unit: 'min', icon: Clock, color: 'var(--color-cyan)', bg: 'rgba(0,229,255,0.1)' },
+    { label: 'Séances cette semaine', value: stats.weekWorkouts, unit: 'séances', icon: Dumbbell, color: 'var(--color-green)', bg: 'rgba(0,255,136,0.1)' },
+    { label: 'Durée moyenne', value: stats.avgDuration, unit: 'min/séance', icon: Activity, color: 'var(--color-purple)', bg: 'rgba(124,58,237,0.1)' },
   ];
 
-  const hour     = new Date().getHours();
+  const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
 
   return (
@@ -92,7 +92,7 @@ export default function Dashboard() {
       {/* Welcome */}
       <div className="animate-fade-in" style={{ marginBottom: '28px' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '28px', marginBottom: '4px' }}>
-          {greeting}, {user?.name?.split(' ')[0]} 👋
+          {greeting}, {user?.name?.split(' ')[0]}
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
           Voici votre résumé sportif. Continuez sur votre lancée !
@@ -133,8 +133,8 @@ export default function Dashboard() {
               <XAxis dataKey="day" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="Calories" fill="var(--color-cyan)"   radius={[4,4,0,0]} opacity={0.85} />
-              <Bar dataKey="Durée"    fill="var(--color-purple)" radius={[4,4,0,0]} opacity={0.85} />
+              <Bar dataKey="Calories" fill="var(--color-cyan)" radius={[4, 4, 0, 0]} opacity={0.85} />
+              <Bar dataKey="Durée" fill="var(--color-purple)" radius={[4, 4, 0, 0]} opacity={0.85} />
             </BarChart>
           </ResponsiveContainer>
           <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
@@ -204,8 +204,8 @@ export default function Dashboard() {
                 }}>
                   {session.exercises[0]?.exerciseName.includes('Course') ? '🏃'
                     : session.exercises[0]?.exerciseName.includes('Vélo') ? '🚴'
-                    : session.exercises[0]?.category === 'strength' ? '🏋️'
-                    : session.exercises[0]?.category === 'hiit' ? '⚡' : '💪'}
+                      : session.exercises[0]?.category === 'strength' ? '🏋️'
+                        : session.exercises[0]?.category === 'hiit' ? '⚡' : '💪'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: '14px', marginBottom: '2px' }}>
@@ -228,7 +228,7 @@ export default function Dashboard() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '12px', flexShrink: 0,
                 }}>
-                  {'😴😐🙂😊🔥'[session.mood - 1]}
+                  {['😴', '😐', '🙂', '😊', '🔥'][session.mood - 1]}
                 </div>
               </div>
             ))}

@@ -8,20 +8,25 @@ import { fetchSessionsThunk, fetchExercisesThunk } from '@/lib/slices/workoutSli
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import Notifications from '@/components/ui/Notifications';
+import { usePathname } from 'next/navigation';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const router    = useRouter();
-  const dispatch  = useAppDispatch();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector(s => s.auth);
-  const { sidebarOpen }     = useAppSelector(s => s.ui);
+  const { sidebarOpen } = useAppSelector(s => s.ui);
   const [mounted, setMounted] = useState(false);
-
+  const pathname = usePathname();
   useEffect(() => {
     setMounted(true);
     dispatch(fetchMeThunk()).unwrap()
-      .then(() => {
+      .then((user) => {
         dispatch(fetchSessionsThunk(90));
         dispatch(fetchExercisesThunk());
+        // Redirect to onboarding if not done yet
+        if (!user.onboardingDone && pathname !== '/onboarding') {
+          router.push('/onboarding');
+        }
       })
       .catch(() => router.push('/'));
   }, []);

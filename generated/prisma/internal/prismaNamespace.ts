@@ -782,9 +782,10 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
-  age: 'age',
   weight: 'weight',
   height: 'height',
+  birthday: 'birthday',
+  onboardingDone: 'onboardingDone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -941,6 +942,13 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

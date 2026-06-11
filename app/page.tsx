@@ -8,66 +8,70 @@ import { addNotification } from '@/lib/slices/uiSlice';
 import { Activity, Eye, EyeOff, Zap, TrendingUp, Award } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import Notifications from '@/components/ui/Notifications';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const loginSchema = z.object({
-  email:    z.string().email('Email invalide'),
+  email: z.string().email('Email invalide'),
   password: z.string().min(6, 'Minimum 6 caractères'),
 });
 
 const registerSchema = z.object({
-  name:            z.string().min(2, 'Minimum 2 caractères'),
-  email:           z.string().email('Email invalide'),
-  password:        z.string().min(6, 'Minimum 6 caractères'),
+  name: z.string().min(2, 'Minimum 2 caractères'),
+  email: z.string().email('Email invalide'),
+  password: z.string().min(6, 'Minimum 6 caractères'),
   confirmPassword: z.string(),
 }).refine(d => d.password === d.confirmPassword, {
   message: 'Les mots de passe ne correspondent pas',
   path: ['confirmPassword'],
 });
 
-type LoginForm    = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<typeof loginSchema>;
 type RegisterForm = z.infer<typeof registerSchema>;
 
 const features = [
-  { icon: Zap,       label: 'Suivi en temps réel',   desc: 'Calories, durée, performances' },
+  { icon: Zap, label: 'Suivi en temps réel', desc: 'Calories, durée, performances' },
   { icon: TrendingUp, label: 'Statistiques avancées', desc: 'Graphiques interactifs' },
-  { icon: Award,     label: 'Objectifs personnels',   desc: 'Progressez à votre rythme' },
+  { icon: Award, label: 'Objectifs personnels', desc: 'Progressez à votre rythme' },
 ];
 
 export default function AuthPage() {
-  const [mode, setMode]       = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register'>('login');
   const [showPass, setShowPass] = useState(false);
-  const router    = useRouter();
-  const dispatch  = useAppDispatch();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector(s => s.auth);
 
   useEffect(() => {
-    if (isAuthenticated) router.push('/dashboard');
+    if (isAuthenticated) router.push('/onboarding');
   }, [isAuthenticated]);
 
-  const loginForm    = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+  const loginForm = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
   const registerForm = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
 
   const handleLogin = async (data: LoginForm) => {
     const result = await dispatch(loginThunk(data));
     if (loginThunk.fulfilled.match(result)) {
       dispatch(addNotification({ type: 'success', message: 'Connexion réussie ! Bienvenue 👋' }));
-      router.push('/dashboard');
+      // Check onboarding
+      if (!result.payload.user.onboardingDone) {
+        router.push('/onboarding');
+      } else {
+        router.push('/dashboard');
+      }
     } else {
       dispatch(addNotification({ type: 'error', message: result.payload as string }));
     }
   };
-
   const handleRegister = async (data: RegisterForm) => {
     const result = await dispatch(registerThunk(data));
     if (registerThunk.fulfilled.match(result)) {
       dispatch(addNotification({ type: 'success', message: 'Compte créé avec succès !' }));
-      router.push('/dashboard');
+      router.push('/onboarding'); // always, new users never have onboardingDone
     } else {
       dispatch(addNotification({ type: 'error', message: result.payload as string }));
     }
   };
-
   /* ── shared label style ── */
   const labelStyle: React.CSSProperties = {
     display: 'block', fontSize: '13px', fontWeight: 600,
@@ -82,12 +86,16 @@ export default function AuthPage() {
 
       {/* ── Left panel (hidden on mobile) ── */}
       <div
-        className="md:flex lg:flex"
+        className="hidden md:flex"
         style={{
-          flex: 1, display: 'none', flexDirection: 'column', justifyContent: 'center',
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
           background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
           borderRight: '1px solid var(--border)',
-          padding: '48px', position: 'relative', overflow: 'hidden',
+          padding: '48px',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
         {/* Decorative grid */}
@@ -184,7 +192,7 @@ export default function AuthPage() {
                   background: mode === m
                     ? 'linear-gradient(135deg, rgba(0,229,255,0.15), rgba(124,58,237,0.15))'
                     : 'transparent',
-                  color:       mode === m ? 'var(--color-cyan)' : 'var(--text-muted)',
+                  color: mode === m ? 'var(--color-cyan)' : 'var(--text-muted)',
                   borderBottom: mode === m ? '1px solid var(--color-cyan)' : '1px solid transparent',
                 }}
               >
@@ -232,9 +240,6 @@ export default function AuthPage() {
               <button type="submit" className="btn-primary" style={{ marginTop: '8px', fontSize: '15px', padding: '13px' }}>
                 Se connecter
               </button>
-              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--text-muted)' }}>
-                Démo : entrez n'importe quel email + mot de passe (6 chars min)
-              </p>
             </form>
           ) : (
             /* Register form */
@@ -297,6 +302,7 @@ export default function AuthPage() {
           )}
         </div>
       </div>
+      <Notifications />
     </div>
   );
 }

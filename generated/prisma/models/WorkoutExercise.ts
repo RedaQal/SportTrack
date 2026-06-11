@@ -615,6 +615,14 @@ export type EnumExerciseCategoryFieldUpdateOperationsInput = {
   set?: $Enums.ExerciseCategory
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type WorkoutExerciseCreateNestedManyWithoutExerciseInput = {
   create?: Prisma.XOR<Prisma.WorkoutExerciseCreateWithoutExerciseInput, Prisma.WorkoutExerciseUncheckedCreateWithoutExerciseInput> | Prisma.WorkoutExerciseCreateWithoutExerciseInput[] | Prisma.WorkoutExerciseUncheckedCreateWithoutExerciseInput[]
   connectOrCreate?: Prisma.WorkoutExerciseCreateOrConnectWithoutExerciseInput | Prisma.WorkoutExerciseCreateOrConnectWithoutExerciseInput[]
